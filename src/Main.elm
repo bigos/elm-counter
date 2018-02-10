@@ -1,19 +1,20 @@
 module Main exposing (..)
 
-import Html exposing (Html, text, div, h1, img)
-import Html.Attributes exposing (src)
+import Html exposing (Html, text, div, h1, img, p, button, span)
+import Html.Attributes exposing (src, style, disabled)
+import Html.Events exposing (onClick)
 
 
 ---- MODEL ----
 
 
 type alias Model =
-    {}
+    { counter : Int }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( {}, Cmd.none )
+    ( { counter = 0 }, Cmd.none )
 
 
 
@@ -22,13 +23,35 @@ init =
 
 type Msg
     = NoOp
+    | Inc
+    | Dec
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        Inc ->
+            ( { model | counter = model.counter + 1}, Cmd.none )
+        Dec ->
+            ( { model | counter = model.counter - 1}, Cmd.none )
+        NoOp ->
+            ( model, Cmd.none )
 
 
+counterBackground : Model -> String
+counterBackground model =
+    if model.counter < 0 then       "#f60"
+    else if model.counter < 10 then "#ff0"
+    else if model.counter < 20 then "#0f0"
+    else if model.counter < 30 then "#4af"
+    else
+        "white"
+
+incDisabled model =
+    if model.counter >= 40 then True else False
+
+decDisabled model =
+    if model.counter <= 0 then True else False
 
 ---- VIEW ----
 
@@ -38,6 +61,16 @@ view model =
     div []
         [ img [ src "/logo.svg" ] []
         , h1 [] [ text "Your Elm App is working!" ]
+        , p []
+            [ button [ onClick Inc
+                     , disabled (incDisabled model) ] [ text "Inc" ]
+            , span [ style [ ("margin", "1em")
+                           , ("background", counterBackground model )
+                           ]
+                   ] [text (toString model.counter)]
+            , button [ onClick Dec
+                     , disabled (decDisabled model) ] [ text "Dec" ]
+            ]
         ]
 
 
