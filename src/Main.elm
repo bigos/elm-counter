@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Html exposing (Html, text, div, h1, img, p, button, span)
 import Html.Attributes exposing (src, style, disabled)
@@ -31,9 +31,12 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Inc ->
-            ( { model | counter = model.counter + 1}, Cmd.none )
+            ( { model | counter = model.counter + 1}
+            , windowTitle ("Elm-count up " ++ (toString (model.counter + 1)))
+            )
         Dec ->
-            ( { model | counter = model.counter - 1}, Cmd.none )
+            ( { model | counter = model.counter - 1}
+            , windowTitle ("Elm-count down " ++ (toString (model.counter - 1))))
         NoOp ->
             ( model, Cmd.none )
 
@@ -41,9 +44,9 @@ update msg model =
 counterBackground : Model -> String
 counterBackground model =
     if model.counter < 0 then       "#f60"
-    else if model.counter < 10 then "#ff0"
-    else if model.counter < 20 then "#0f0"
-    else if model.counter < 30 then "#4af"
+    else if model.counter < 10 then "#ffa"
+    else if model.counter < 20 then "#8f8"
+    else if model.counter < 30 then "#8cf"
     else
         "white"
 
@@ -86,3 +89,5 @@ main =
         , update = update
         , subscriptions = always Sub.none
         }
+
+port windowTitle : String -> Cmd msg
